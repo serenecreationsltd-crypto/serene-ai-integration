@@ -1,27 +1,49 @@
-from dataclasses import dataclass
+import json
 from functools import lru_cache
 from pathlib import Path
-import json
+from pydantic_settings import BaseSettings
+from typing import Optional
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 DATA_DIR = BASE_DIR / "data"
 
-@dataclass
-class AppSettings:
+class Settings(BaseSettings):
+    # App config
     app_name: str = "Serene Intelligence"
-    app_version: str = "0.1.0"
+    app_version: str = "0.2.0"
     environment: str = "development"
-    openai_api_key: str | None = None
+    debug: bool = True
+    
+    # LLM config
+    openai_api_key: Optional[str] = None
+    llm_model: str = "gpt-4o-mini"
+    llm_temperature: float = 0.7
+    llm_max_tokens: int = 2000
+    
+    # Database
+    database_url: str = "sqlite:///./serene.db"
+    
+    # Redis
+    redis_url: str = "redis://localhost:6379"
+    
+    # Auth
+    jwt_secret: str = "your-secret-key-change-this-in-production"
+    jwt_algorithm: str = "HS256"
+    jwt_expiration_hours: int = 24
+    
+    # Admin
+    admin_username: str = "admin"
+    admin_password: str = "change-me"
+    
+    class Config:
+        env_file = ".env"
+        case_sensitive = False
 
-@lru_cache
-def get_settings() -> AppSettings:
-    import os
-    return AppSettings(
-        openai_api_key=os.getenv("OPENAI_API_KEY"),
-        environment=os.getenv("APP_ENV", "development"),
-    )
+@lru_cache()
+def get_settings() -> Settings:
+    return Settings()
 
-@lru_cache
+@lru_cache()
 def load_brand_context() -> dict:
     file_path = DATA_DIR / "brand_context.json"
     if not file_path.exists():

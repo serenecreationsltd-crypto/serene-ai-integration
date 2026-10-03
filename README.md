@@ -1,53 +1,96 @@
-# serene-ai-integration
+# Serene AI Integration
 
-AI model that integrates all serenecreations.org buildup — a unified intelligence layer for architecture, design, content, and business operations.
+Full-stack AI assistant that integrates all serenecreations.org buildup into one unified intelligence platform.
 
-## What this repo contains
+## Features
 
-This repository is an MVP foundation for a `Serene Intelligence` platform that can:
+✅ **Public Chat Interface** – Users ask questions about Serene Creations
+✅ **OpenAI LLM Integration** – Real-time AI responses with brand context
+✅ **Admin Dashboard** – Manage conversations, knowledge base, and analytics
+✅ **Authentication** – JWT-based auth with admin controls
+✅ **Conversation History** – Persistent conversation tracking
+✅ **Knowledge Base** – Curated brand and business context
+✅ **Production-Ready** – Database persistence, CORS, error handling
 
-- unify brand, creative, and business context
-- answer questions using a curated knowledge base
-- provide a chat interface for internal/external use
-- scale toward integrations with CRM, CMS, sales, and project workflows
+## Quick Start
+
+```bash
+# Install
+pip install -r requirements.txt
+
+# Configure
+cp .env.example .env
+# Edit .env and add OPENAI_API_KEY
+
+# Run
+python main.py
+```
+
+Open http://localhost:8000/
+
+## Deployment
+
+See [DEPLOYMENT.md](DEPLOYMENT.md) for production guides (Heroku, Railway, AWS, Docker).
+
+## Admin Dashboard
+
+Access at http://localhost:8000/dashboard.html
+
+**Login:** admin / change-me (change in production!)
+
+## API Documentation
+
+View interactive docs at http://localhost:8000/docs
 
 ## Architecture
 
-- Backend: FastAPI API
-- Frontend: lightweight chat UI served from the same app
-- Knowledge layer: curated brand and business context in `data/brand_context.json`
-- AI strategy: local-first reasoning with optional OpenAI integration in the future
-
-## Run locally
-
-```bash
-python -m venv .venv
-source .venv/bin/activate
-pip install -r requirements.txt
-uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+```
+serene-ai-integration/
+├── app/
+│   ├── server.py       # FastAPI app
+│   ├── routes.py       # API endpoints
+│   ├── database.py     # SQLAlchemy models
+│   ├── llm.py          # OpenAI integration
+│   ├── auth.py         # JWT authentication
+│   ├── config.py       # Settings
+│   ├── schemas.py      # Pydantic models
+│   └── static/
+│       ├── index.html  # Chat UI
+│       ├── dashboard.html  # Admin panel
+│       ├── login.html  # Auth page
+│       ├── styles.css
+│       ├── app.js
+│       └── dashboard.js
+├── data/
+│   └── brand_context.json  # Brand knowledge
+├── main.py
+├── requirements.txt
+├── .env.example
+└── DEPLOYMENT.md
 ```
 
-Then open:
+## Environment Variables
 
-- http://localhost:8000/
-- http://localhost:8000/api/health
-
-## Example API call
-
-```bash
-curl -X POST http://localhost:8000/api/chat \
-  -H "Content-Type: application/json" \
-  -d '{"message":"What is the brand vision of serenecreations.org?"}'
+```
+OPENAI_API_KEY=sk-...
+DATABASE_URL=sqlite:///./serene.db  # or postgresql://...
+JWT_SECRET=your-secret-key
+APP_ENV=development|production
 ```
 
-## Next steps
+## Integration with serenecreations.org
 
-1. Add a real vector database or embeddings store
-2. Connect CMS/CRM/Notion/Slack integrations
-3. Add authenticated admin dashboard
-4. Expand knowledge base to cover projects, services, and sales workflows
-5. Add LLM integration with Azure OpenAI or OpenAI
+1. **Chat Widget** – Embed in website
+2. **iFrame** – Display in sidebar
+3. **API** – Integrate backend-to-backend
+4. **Standalone** – Run as separate app at intelligence.serenecreations.org
 
-## License
+## Next Steps
 
-MIT
+- Deploy to production
+- Add your brand context to `data/brand_context.json`
+- Connect to CRM/CMS/project management tools
+- Fine-tune LLM on your specific business data
+- Set up analytics and user feedback
+
+For detailed deployment instructions, see [DEPLOYMENT.md](DEPLOYMENT.md).
