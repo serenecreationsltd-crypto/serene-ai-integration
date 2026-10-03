@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Serene Intelligence</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <div class="shell">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">Serene Creations</p>
+          <h1>Serene Intelligence</h1>
+        </div>
+      </header>
+
+      <main class="chat-panel">
+        <div id="messages" class="messages">
+          <div class="bot-message">
+            Welcome to the Serene Intelligence MVP. Ask me about the brand, design philosophy, business model, or AI integration.
+          </div>
+        </div>
+
+        <form id="chat-form" class="composer">
+          <input
+            id="message"
+            type="text"
+            placeholder="Ask about the Serene ecosystem..."
+            autocomplete="off"
+            required
+          />
+          <button type="submit">Send</button>
+        </form>
+      </main>
+    </div>
+
+    <script src="/app.js"></script>
+  </body>
+</html>

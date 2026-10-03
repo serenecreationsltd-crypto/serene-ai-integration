@@ -1,0 +1,45 @@
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+from pydantic import BaseModel
+
+from app.config import get_settings
+from app.knowledge import generate_answer
+
+
+class ChatRequest(BaseModel):
+    message: str
+
+
+app = FastAPI(title="Serene Intelligence", version=get_settings().app_version)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+
+@app.get("/api/health")
+def health() -> dict:
+    return {
+        "status": "ok",
+        "app": get_settings().app_name,
+        "version": get_settings().app_version,
+        "environment": get_settings().environment,
+    }
+
+
+@app.post("/api/chat")
+def chat(request: ChatRequest) -> dict:
+    answer = generate_answer(request.message)
+    return {
+        "question": request.message,
+        "answer": answer,
+        "source": "local-knowledge-base",
+    }
+
+
+app.mount("/", StaticFiles(directory="app/static", html=True), name="static")
