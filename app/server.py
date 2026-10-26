@@ -4,6 +4,7 @@ from fastapi.staticfiles import StaticFiles
 from contextlib import asynccontextmanager
 from app.config import get_settings
 from app.routes import router
+from app.provider_gateway import router as integrations_router
 from app.database import get_db, create_admin_user
 from sqlalchemy.orm import Session
 
@@ -36,5 +37,6 @@ app.add_middleware(
 )
 
 app.include_router(router)
+app.include_router(integrations_router)
 
 app.mount("/", StaticFiles(directory="app/static", html=True), name="static")
