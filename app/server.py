@@ -1,4 +1,7 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
+from fastapi.responses import JSONResponse
+import os
+import secrets
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from contextlib import asynccontextmanager
@@ -30,6 +33,15 @@ app = FastAPI(
     version=settings.app_version,
     lifespan=lifespan,
 )
+
+@app.middleware("http")
+async def protect_public_chat(request: Request, call_next):
+    if request.url.path == "/api/chat" and settings.environment.lower() == "production":
+        expected = os.environ.get("GATEWAY_SERVER_TOKEN", "")
+        received = request.headers.get("X-Gateway-Token", "")
+        if not expected or not secrets.compare_digest(received, expected):
+            return JSONResponse({"detail": "Gateway authorization required"}, status_code=401)
+    return await call_next(request)
 
 app.add_middleware(
     CORSMiddleware,
