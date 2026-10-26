@@ -49,7 +49,9 @@ def login(credentials: UserLogin, db: Session = Depends(get_db)):
 @router.post("/api/chat", response_model=ChatResponse)
 def chat(request: ChatRequest, db: Session = Depends(get_db)):
     """Public chat endpoint (uses LLM if available)."""
-    conversation_id = request.conversation_id
+    if request.conversation_id is not None:
+        raise HTTPException(status_code=400, detail="Public conversation continuation is unavailable")
+    conversation_id = None
     
     # Get or create conversation
     if conversation_id:
