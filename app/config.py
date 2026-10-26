@@ -61,4 +61,14 @@ def load_brand_context() -> dict:
         }
 
     with file_path.open("r", encoding="utf-8") as f:
-        return json.load(f)
+        try:
+            data = json.load(f)
+        except (ValueError, UnicodeError):
+            data = {}
+    if not isinstance(data, dict):
+        data = {}
+    return {
+        "brand_name": str(data.get("brand_name") or "Serene Creations"),
+        "mission": str(data.get("mission") or "Engineering, design and construction services"),
+        "tone": str(data.get("tone") or "Professional and clear"),
+    }
