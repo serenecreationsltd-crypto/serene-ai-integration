@@ -10,7 +10,8 @@ os.environ["DATABASE_URL"] = "sqlite:///./test_gateway_auth.db"
 from app.server import app
 from app.config import get_settings
 
-get_settings.cache_clear()
+from app import server
+server.settings.environment = "production"
 
 def test_chat_requires_gateway_token():
     with TestClient(app) as client:
