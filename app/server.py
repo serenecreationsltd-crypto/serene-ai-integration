@@ -7,6 +7,7 @@ from app.routes import router
 from app.provider_gateway import router as integrations_router
 from app.database import get_db
 from app.auth import create_admin_user
+from app.security_checks import validate_security_configuration
 from sqlalchemy.orm import Session
 
 settings = get_settings()
@@ -14,6 +15,7 @@ settings = get_settings()
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # Startup
+    validate_security_configuration()
     db: Session = next(get_db())
     create_admin_user(db)
     db.close()
