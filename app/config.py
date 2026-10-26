@@ -12,7 +12,8 @@ class Settings(BaseSettings):
     app_name: str = "Serene Intelligence"
     app_version: str = "0.2.0"
     environment: str = "development"
-    debug: bool = True
+    debug: bool = False
+    cors_origins: list[str] = ["https://serenecreations.org", "https://www.serenecreations.org", "https://serene-ai.serenecreations.org"]
     
     # LLM config
     openai_api_key: Optional[str] = None
@@ -27,13 +28,13 @@ class Settings(BaseSettings):
     redis_url: str = "redis://localhost:6379"
     
     # Auth
-    jwt_secret: str = "your-secret-key-change-this-in-production"
+    jwt_secret: str = ""
     jwt_algorithm: str = "HS256"
     jwt_expiration_hours: int = 24
     
     # Admin
     admin_username: str = "admin"
-    admin_password: str = "change-me"
+    admin_password: str = ""
     
     class Config:
         env_file = ".env"

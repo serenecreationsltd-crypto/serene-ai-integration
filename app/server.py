@@ -4,7 +4,10 @@ from fastapi.staticfiles import StaticFiles
 from contextlib import asynccontextmanager
 from app.config import get_settings
 from app.routes import router
-from app.database import get_db, create_admin_user
+from app.provider_gateway import router as integrations_router
+from app.database import get_db
+from app.auth import create_admin_user
+from app.security_checks import validate_security_configuration
 from sqlalchemy.orm import Session
 
 settings = get_settings()
@@ -12,6 +15,7 @@ settings = get_settings()
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # Startup
+    validate_security_configuration()
     db: Session = next(get_db())
     create_admin_user(db)
     db.close()
@@ -29,12 +33,13 @@ app = FastAPI(
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=settings.cors_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
 app.include_router(router)
+app.include_router(integrations_router)
 
 app.mount("/", StaticFiles(directory="app/static", html=True), name="static")

@@ -3,7 +3,7 @@ from typing import Optional
 import jwt
 import bcrypt
 from fastapi import Depends, HTTPException, status
-from fastapi.security import HTTPBearer, HTTPAuthCredentials
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from app.config import get_settings
 from sqlalchemy.orm import Session
 from app.database import User, get_db
@@ -36,7 +36,7 @@ def verify_token(token: str) -> dict:
     except jwt.InvalidTokenError:
         raise HTTPException(status_code=401, detail="Invalid token")
 
-def get_current_user(credentials: HTTPAuthCredentials = Depends(security), db: Session = Depends(get_db)) -> User:
+def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(security), db: Session = Depends(get_db)) -> User:
     token = credentials.credentials
     payload = verify_token(token)
     user_id = payload.get("user_id")
@@ -45,8 +45,8 @@ def get_current_user(credentials: HTTPAuthCredentials = Depends(security), db: S
         raise HTTPException(status_code=401, detail="Invalid credentials")
     
     user = db.query(User).filter(User.id == user_id).first()
-    if not user:
-        raise HTTPException(status_code=401, detail="User not found")
+    if not user or not user.is_active:
+        raise HTTPException(status_code=401, detail="User not found or inactive")
     
     return user
 
@@ -59,10 +59,12 @@ def create_admin_user(db: Session):
     """Create initial admin user if it doesn't exist."""
     admin = db.query(User).filter(User.username == "admin").first()
     if not admin:
+        if not settings.admin_password or len(settings.admin_password) < 16:
+            raise RuntimeError("Set a strong ADMIN_PASSWORD before initial setup")
         admin = User(
             username="admin",
             email="admin@serenecreations.org",
-            hashed_password=hash_password("change-me"),
+            hashed_password=hash_password(settings.admin_password),
             is_admin=True,
             is_active=True,
         )
