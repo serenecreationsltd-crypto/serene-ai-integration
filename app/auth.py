@@ -3,7 +3,7 @@ from typing import Optional
 import jwt
 import bcrypt
 from fastapi import Depends, HTTPException, status
-from fastapi.security import HTTPBearer, HTTPAuthCredentials
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from app.config import get_settings
 from sqlalchemy.orm import Session
 from app.database import User, get_db
@@ -36,7 +36,7 @@ def verify_token(token: str) -> dict:
     except jwt.InvalidTokenError:
         raise HTTPException(status_code=401, detail="Invalid token")
 
-def get_current_user(credentials: HTTPAuthCredentials = Depends(security), db: Session = Depends(get_db)) -> User:
+def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(security), db: Session = Depends(get_db)) -> User:
     token = credentials.credentials
     payload = verify_token(token)
     user_id = payload.get("user_id")
@@ -45,8 +45,8 @@ def get_current_user(credentials: HTTPAuthCredentials = Depends(security), db: S
         raise HTTPException(status_code=401, detail="Invalid credentials")
     
     user = db.query(User).filter(User.id == user_id).first()
-    if not user:
-        raise HTTPException(status_code=401, detail="User not found")
+    if not user or not user.is_active:
+        raise HTTPException(status_code=401, detail="User not found or inactive")
     
     return user
 
