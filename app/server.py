@@ -5,7 +5,8 @@ from contextlib import asynccontextmanager
 from app.config import get_settings
 from app.routes import router
 from app.provider_gateway import router as integrations_router
-from app.database import get_db, create_admin_user
+from app.database import get_db
+from app.auth import create_admin_user
 from sqlalchemy.orm import Session
 
 settings = get_settings()
@@ -30,7 +31,7 @@ app = FastAPI(
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=settings.cors_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
