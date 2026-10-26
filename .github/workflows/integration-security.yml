@@ -12,8 +12,8 @@ jobs:
         with:
           python-version: '3.11'
       - name: Install test dependencies
-        run: pip install pytest fastapi pydantic pydantic-settings sqlalchemy pyjwt bcrypt
+        run: pip install pytest httpx fastapi pydantic pydantic-settings sqlalchemy pyjwt bcrypt email-validator openai
       - name: Compile application
         run: python -m compileall -q app tests
       - name: Run security tests
-        run: python -m pytest -q tests/test_security_checks.py
+        run: python -m pytest -q tests/test_security_checks.py tests/test_gateway_smoke.py
