@@ -12,7 +12,8 @@ class Settings(BaseSettings):
     app_name: str = "Serene Intelligence"
     app_version: str = "0.2.0"
     environment: str = "development"
-    debug: bool = True
+    debug: bool = False
+    cors_origins: list[str] = ["https://serenecreations.org", "https://www.serenecreations.org", "https://serene-ai.serenecreations.org"]
     
     # LLM config
     openai_api_key: Optional[str] = None
