@@ -59,10 +59,12 @@ def create_admin_user(db: Session):
     """Create initial admin user if it doesn't exist."""
     admin = db.query(User).filter(User.username == "admin").first()
     if not admin:
+        if not settings.admin_password or len(settings.admin_password) < 16:
+            raise RuntimeError("Set a strong ADMIN_PASSWORD before initial setup")
         admin = User(
             username="admin",
             email="admin@serenecreations.org",
-            hashed_password=hash_password("change-me"),
+            hashed_password=hash_password(settings.admin_password),
             is_admin=True,
             is_active=True,
         )
